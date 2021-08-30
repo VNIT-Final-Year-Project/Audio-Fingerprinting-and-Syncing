@@ -4,5 +4,5 @@ class downSample:
         pass
 
     def down_sample(self,data,sample_division_size):
-        data = data[0::sample_division_size, 1]
+        data = data[0::sample_division_size,0]
         return data
