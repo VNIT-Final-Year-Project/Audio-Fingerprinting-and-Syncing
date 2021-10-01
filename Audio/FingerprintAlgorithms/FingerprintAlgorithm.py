@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class SyncAlgorithm(ABC):
+class FingerprintAlgorithm(ABC):
     @abstractmethod
-    def sync(self):
+    def fingerprint(self):
         pass
