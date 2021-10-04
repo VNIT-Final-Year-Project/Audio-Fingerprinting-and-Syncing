@@ -1,4 +1,4 @@
-
+import hashlib
 
 class fastComputation():
   def __init__(self):
@@ -33,21 +33,31 @@ class fastComputation():
     cdef double ma2 = -4000
     cdef double freq2 = 0
     cdef double freq = 0
+    cdef double freq3 = 0
+    cdef double ma3 = -4000
     for i in range(1,len(Pxx[0])):
-        for j in range(20,len(Pxx)): #finding maximum freq
+        for j in range(20,50): #finding maximum freq
             if(Pxx[j][i]>ma):
                 ma = Pxx[j][i]
                 freq = f[j]
-        for j in range(20,len(Pxx)): #finding second max freq
-            if(Pxx[j][i]>ma2 and Pxx[j][i]<ma):
+        for j in range(50,80): #finding second max freq
+            if(Pxx[j][i]>ma2):
                 ma2 = Pxx[j][i]
                 freq2 = f[j]
-        if(freq>0 and freq2>0):
-            temp = [freq,freq2]
-            peaks.append(temp)
+
+        for j in range(80,110): #finding second max freq
+            if(Pxx[j][i]>ma3):
+                ma3 = Pxx[j][i]
+                freq3 = f[j]
+
+        if(freq>0 and freq2>0 and freq3>0):
+            temp = str(freq)+str(freq2)+str(freq3)
+            peaks.append(hashlib.md5(temp.encode()).hexdigest())
             ma = -4000
             freq = 0
             ma2 = -4000
             freq2 = 0
+            freq3 =0
+            ma3=-4000
 
     return peaks
