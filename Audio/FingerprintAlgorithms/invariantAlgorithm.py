@@ -13,8 +13,8 @@ class invariantAlgorithm(FingerprintAlgorithm):
     def __init__(self):
         pass
 
-    def fingerprint(self,file_path):
-        if(len(file_path)>0):
+    def fingerprint(self,file_path,Record):
+        if(Record==False):
             data, samplerate = sf.read(file_path)
             if(len(data.shape)>=2):
                 data = data[:, 0]
@@ -22,7 +22,6 @@ class invariantAlgorithm(FingerprintAlgorithm):
                                          ,cmap='jet')
             # print(Pxx)
             # plt.show()
-            # f, t, Pxx = signal.spectrogram(data, fs=samplerate,noverlap=120,nfft=2048,mode='magnitude')
             print(Pxx.shape)
             peaks = self.get_peaks(Pxx, f)
             return peaks
@@ -32,7 +31,7 @@ class invariantAlgorithm(FingerprintAlgorithm):
             data = recorder.record()
 
             print("stopped recording to fingerprint")
-            Pxx, f, t, im = plt.specgram(data, Fs=44100, noverlap=900, NFFT=1024, mode='magnitude'
+            Pxx, f, t, im = plt.specgram(data, Fs=44100, noverlap=500, NFFT=1024, mode='magnitude'
                                          , cmap='jet')
             peaks = self.get_peaks(Pxx, f)
             return peaks
