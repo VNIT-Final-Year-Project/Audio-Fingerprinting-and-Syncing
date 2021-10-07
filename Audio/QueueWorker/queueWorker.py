@@ -34,6 +34,18 @@ class Queueworker():
         channel.basic_publish(exchange='output_exchange', routing_key=server, body=json_string)
         connection.close()
 
+    def distribute_load_lcs(self,no_of_servers,result):
+        index_of_server = 1
+        server_name = 'server'
+        partition = (len(result))//no_of_servers+1
+        current_server = server_name+str(index_of_server)
+        for i in range(1,len(result)):
+            if(i%partition==0):
+                print(i,partition)
+                index_of_server = index_of_server+1
+                current_server = server_name + str(index_of_server)
+            self.produce(result[i],result[0],i-1,server=current_server)
+
 
 
 
