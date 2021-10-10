@@ -1,38 +1,79 @@
 from Audio.AudioMain import Audio
 from SyncAlgorithms.correlationSyncNoFilter import correlationSyncNoFilter
 from Audio.FingerprintAlgorithms.invariantAlgorithm import invariantAlgorithm
-import matplotlib.pyplot as plt
-import numpy as np
+from multiprocessing import Pool
+from Audio.QueueWorker.queueWorker import Queueworker
+import threading
+
+q = []
 
 
-audio = Audio(correlationSyncNoFilter(),invariantAlgorithm())
-# audio.sync_audio()
-peaks_recorded = audio.fingerprint(file_path="")
-peaks_song1 = audio.fingerprint(file_path=r"C:\Users\tarun\Desktop\music\wolf.wav")
-peak_song2 = audio.fingerprint(file_path=r"C:\Users\tarun\Desktop\stay.wav")
-peak_song3 = audio.fingerprint(file_path=r"C:\Users\tarun\Desktop\music\chain.wav")
-# peaks_recorded = audio.fingerprint(file_path=r"C:\Users\tarun\Desktop\stay2.wav")
+if __name__ == '__main__':
+    audio = Audio(correlationSyncNoFilter(),invariantAlgorithm())
 
-# fig, axs = plt.subplots(3)
-# fig.suptitle('Vertically stacked subplots')
-# axs[0].plot(peaks_song1)
-# axs[1].plot(peak_song2)
-# axs[2].plot(peaks_recorded)
 
-# plt.plot(peaks_song1)
-# plt.show()
-print('length of song1 peaks '+str(len(peaks_song1)))
-print('length of song2 peaks '+str(len(peak_song2)))
-print('length of song3 peaks '+str(len(peak_song3)))
-# print(peaks_recorded)
 
-# print(len(peaks_recorded))
-print('getting lcs')
-print(audio.lcs(peaks_song1,peaks_recorded))
-print(audio.lcs(peak_song2,peaks_recorded))
-print(audio.lcs(peak_song3,peaks_recorded))
-# print(audio.fingerprint_algorithm.pattern_match(peaks_song1,peaks_recorded))
-# print(audio.fingerprint_algorithm.pattern_match(peak_song2,peaks_recorded))
-# print(audio.fingerprint_algorithm.pattern_match(peak_song3,peaks_recorded))
+    # """Code to fingerprint Songs with following names in /music folder"""
+    #
+    # import os
+    #
+    # Songs = os.listdir(r'C:\Users\tarun\Desktop\music')
+    # starmap_tuple = []
+    # for song in Songs:
+    #     starmap_tuple.append((song,"mongodb://127.0.0.1:27017"))
+    # p2 = Pool()
+    # output = p2.starmap(audio.fingerprint_to_database,starmap_tuple)
+    # p2.close()
+    # p2.join()
+
+
+
+    """computing lcs of result obtained"""
+    result,songs_found = audio.record_result_from_database()
+    import pymongo
+    client = pymongo.MongoClient("mongodb://127.0.0.1:27017", serverSelectionTimeoutMS=5000)
+    db = client['Fingerprints']
+    import time
+
+    # """Using Single Machine multiple cores"""
+    # start_time = time.time()
+    # p2 = Pool()
+    # data = []
+    # for i in range(1,len(result)):
+    #     data.append((result[i],result[0]))
+    # output = p2.starmap(audio.lcs,data)
+    # print(output)
+    # print(time.time()-start_time)
+    # p2.close()
+    # p2.join()
+    # collection_song = db['SongIds']
+    # print(collection_song.find_one({'_id':songs_found[output.index(max(output))]}))
+    # client.close()
+
+
+
+
+    # """Using Multiple Machines"""
+    # queueWorker = Queueworker(len(result)-1)
+    # queueWorker.distribute_load_lcs(2,result)
+    # start_time = time.time()
+    # t1 = threading.Thread(target=queueWorker.consume, args=(q,))
+    # t1.start()
+    # t1.join()
+    #
+    # while(len(q)!=len(result)-1):
+    #     pass
+    # ma = 0
+    # index = -1
+    # for i in range(len(q)):
+    #     if(ma<q[i][1]):
+    #         index = q[i][0]
+    #         ma = q[i][1]
+    # collection_song = db['SongIds']
+    # print(collection_song.find_one({'_id': songs_found[index]}))
+    #
+    # print(q)
+    # print(time.time()-start_time)
+    # client.close()
 
 
