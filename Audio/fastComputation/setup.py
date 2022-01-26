@@ -4,4 +4,4 @@ from Cython.Build import cythonize
 
 
 
-setup(ext_modules = cythonize('fastComputation.pyx'))
+setup(ext_modules = cythonize('fastComputation.py'))

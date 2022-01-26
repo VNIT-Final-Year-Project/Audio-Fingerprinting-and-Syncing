@@ -3,7 +3,7 @@ class Audio:
     def __init__(self, sync_algorithm, fingerprint_algorithm):
         self.sync_algorithm = sync_algorithm
         self.fingerprint_algorithm = fingerprint_algorithm
-        self.base_path = r'C:\Users\tarun\Desktop\music\{}'
+        self.base_path = r'/home/tarundecipher/Documents/Music_wav/{}'
 
 
     def sync_audio(self,SongName):
@@ -41,7 +41,7 @@ class Audio:
 
         dict = collections.defaultdict(list)
         songs_found = []
-        client = pymongo.MongoClient("mongodb://127.0.0.1:27017", serverSelectionTimeoutMS=5000)
+        client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
         db = client['Fingerprints']
         collections_hash = db['HashValues']
         peaks = self.fingerprint("", True)

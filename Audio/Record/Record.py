@@ -10,8 +10,10 @@ class Recorder:
         self.sample_division_size = sample_division_size
 
     def record(self):
+        print("started recording")
         recording = sd.rec(int(self.duration * self.sampling_freq), samplerate=self.sampling_freq, channels=1)
         sd.wait()
+        print("stopped recording")
         # sd.play(recording, 44100)
         # sd.wait()
         recording = downSample().down_sample(recording, self.sample_division_size)

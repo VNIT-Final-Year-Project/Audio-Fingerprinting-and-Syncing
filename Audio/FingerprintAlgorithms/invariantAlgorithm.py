@@ -6,12 +6,13 @@ from scipy import signal
 from Audio.fastComputation.fastComputation import fastComputation
 
 from Audio.Record.Record import Recorder
-
+from numba import jit
 
 
 class invariantAlgorithm(FingerprintAlgorithm):
     def __init__(self):
-        pass
+        self.lcs = jit()(fastComputation.lcs)
+        self.find_peaks = jit()(fastComputation.get_peaks)
 
     def fingerprint(self,file_path,Record):
         if(Record==False):
@@ -37,10 +38,10 @@ class invariantAlgorithm(FingerprintAlgorithm):
             return peaks
 
     def get_peaks(self,Pxx,f):
-        return fastComputation.get_peaks(Pxx,f)
+        return self.find_peaks(Pxx,f)
 
     def lcs(self,X, Y):
-        return fastComputation.lcs(X,Y)
+        return self.lcs(X,Y)
 
     def print_specgram(self,Pxx,f,t):
          plt.pcolormesh(t, f, Pxx)
