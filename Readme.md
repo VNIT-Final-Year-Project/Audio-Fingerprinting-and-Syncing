@@ -24,7 +24,7 @@ audio = Audio(correlationSyncNoFilter(),invariantAlgorithm(),
     import os
     Songs = os.listdir(r'/home/tarundecipher/Documents/Music_wav')
     for song in Songs:
-        audio.fingerprint_to_database(song,"mongodb://localhost:27017")
+        audio.fingerprint_to_database(song)
 ```
 
 ## Example code snippet to sync recorded audio with the one passed as arguement

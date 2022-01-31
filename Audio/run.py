@@ -32,7 +32,7 @@ def main():
     # starmap_tuple = []
     for song in Songs:
     #     starmap_tuple.append((song,"mongodb://localhost:27017"))
-        audio.fingerprint_to_database(song,"mongodb://localhost:27017")
+        audio.fingerprint_to_database(song)
     #
     # p2 = Pool()
     # output = p2.starmap(audio.fingerprint_to_database,starmap_tuple)
