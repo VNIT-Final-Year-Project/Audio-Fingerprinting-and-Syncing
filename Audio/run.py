@@ -26,14 +26,14 @@ def main():
 
     """Code to fingerprint Songs with following names in /music folder"""
 
-    import os
-
+    # import os
+    #
     # Songs = os.listdir(r'/home/tarundecipher/Documents/Music_wav')
     # starmap_tuple = []
     # for song in Songs:
-        # starmap_tuple.append((song,"mongodb://localhost:27017"))
-        # audio.fingerprint_to_database(song,"mongodb://localhost:27017")
-
+    #     starmap_tuple.append((song,"mongodb://localhost:27017"))
+    #     audio.fingerprint_to_database(song,"mongodb://localhost:27017")
+    #
     # p2 = Pool()
     # output = p2.starmap(audio.fingerprint_to_database,starmap_tuple)
     # p2.close()
