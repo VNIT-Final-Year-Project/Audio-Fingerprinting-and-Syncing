@@ -1,8 +1,8 @@
-#Audio Synchronization and Fingerprinting package
-##Example
+# Audio Synchronization and Fingerprinting package
+## Example
 run.py contains various examples of using the package.
 
-##Setting up database
+## Setting up database
 Execute following commands to run a mongodb instance 
 where the fingerprints will be stored and queried from.
 Make sure you have docker installed.
