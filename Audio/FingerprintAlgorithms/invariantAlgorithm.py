@@ -28,7 +28,7 @@ class invariantAlgorithm(FingerprintAlgorithm):
             return peaks
         else:
             print("started recording to fingerprint")
-            recorder = Recorder(10, 44100, 1, 1)
+            recorder = Recorder(1, 44100, 1, 1)
             data = recorder.record()
 
             print("stopped recording to fingerprint")

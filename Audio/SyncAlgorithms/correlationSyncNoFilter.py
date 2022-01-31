@@ -16,7 +16,7 @@ class correlationSyncNoFilter(SyncAlgorithm):
         pass
 
     def sync(self, file_path):
-        recorder = Recorder(5, 44100, 1, 20)
+        recorder = Recorder(1, 44100, 1, 20)
         recording = recorder.record()
         tic = time.perf_counter()
         audio = getAudio().get_audio(file_path, 20)

@@ -14,10 +14,7 @@ q = []
 
 def main():
     start_time = time.time()
-    audio = Audio(correlationSyncNoFilter(),invariantAlgorithm(),
-                  mongodb_database("mongodb://localhost:27017"),
-                  r'/home/tarundecipher/Documents/Music_wav/{}'
-                  )
+    audio = Audio(correlationSyncNoFilter(),invariantAlgorithm(),mongodb_database("mongodb://localhost:27017"))
 
     """sync example"""
     # audio.sync_audio('Eminem - The Monster (Audio) ft. Rihanna [LoudTronix] [HQ].mp3.wav')

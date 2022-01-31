@@ -4,5 +4,8 @@ class downSample:
         pass
 
     def down_sample(self,data,sample_division_size):
-        data = data[0::sample_division_size,0]
+        if(len(data.shape)>1):
+            data = data[0::sample_division_size,0]
+        else:
+            data = data[0::sample_division_size]
         return data

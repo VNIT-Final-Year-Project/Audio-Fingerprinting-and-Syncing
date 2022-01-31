@@ -1,68 +1,37 @@
+import pymongo
+import collections
+import time
+
 class Audio:
 
-    def __init__(self, sync_algorithm, fingerprint_algorithm):
+    def __init__(self, sync_algorithm, fingerprint_algorithm, database,base_path):
         self.sync_algorithm = sync_algorithm
         self.fingerprint_algorithm = fingerprint_algorithm
-        self.base_path = r'/home/tarundecipher/Documents/Music_wav/{}'
+        self.database = database
+        self.base_path = base_path
 
-
+    """This syncs the base_path + songName provided with the recorded snippet"""
     def sync_audio(self,SongName):
         self.sync_algorithm.sync(self.base_path.format(SongName))
 
+    """This function returns the list of peaks for a SongName provided if Record is false.
+    If Record is set True then it will return peaks for the recorded audio"""
     def fingerprint(self,SongName,Record):
         return self.fingerprint_algorithm.fingerprint(self.base_path.format(SongName),Record)
 
-    def fingerprint_to_database(self,SongName,connection_string):
-        peaks = self.fingerprint(SongName,False)
-        import pymongo
-        client = pymongo.MongoClient(connection_string,serverSelectionTimeoutMS=5000)
-        try:
-            print(client.server_info())
-            db = client['Fingerprints']
-            collection_ids = db['SongIds']
-            result = collection_ids.find_one({'SongName':SongName})
-            songId = ""
-            if(result==None):
-                collection_ids.insert({'SongName':SongName})
-                result = collection_ids.find_one({'SongName': SongName})
-                songId = result['_id']
-                collection_hash = db['HashValues']
-                for i in range(len(peaks)):
-                    collection_hash.update({"hash": peaks[i]}, {'$push': {'Values': [songId, i]}}, True)
-            print(SongName+" fingerprinted")
-            client.close()
-        except Exception as e:
-            print(e)
+    """This function writes fingerprint to database of the base_path+SongName provided"""
+    def fingerprint_to_database(self,SongName):
+        self.database.fingerprint_to_database(SongName,self)
 
+    """This function returns result,songs_found for the recorded snippet from the database
+    result contains a 2D list [[],[]..] of peaks where result[0] is peak for the recorded 
+    audio which need to be matched with other record indices like record[1],record[2].
+    songs_found contains the id of the songs found from the database where record[1]
+    corresponds to songs_found[0] because record[0] is for recorded audio."""
     def record_result_from_database(self):
-        """Code to retrieve data of recorded song match from database"""
-        import pymongo
-        import collections
+        return self.database.record_result_from_database(self)
 
-        dict = collections.defaultdict(list)
-        songs_found = []
-        client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
-        db = client['Fingerprints']
-        collections_hash = db['HashValues']
-        peaks = self.fingerprint("", True)
-        for peak in peaks:
-            array = collections_hash.find_one({'hash': peak})
-            if (array != None):
-                array = array['Values']
-                for element in array:
-                    dict[element[0]].append([element[1], peak])
-                    songs_found.append(element[0])
-        songs_found = set(songs_found)
-        songs_found = (list(songs_found))
-        result = [peaks]
-        for song in songs_found:
-            dict[song].sort()
-            temp = []
-            for element in dict[song]:
-                temp.append(element[1])
-            result.append(temp)
-        client.close()
-        return result,songs_found
-
+    """This function is used to return the LCS value for the two lists provided as arguements.
+    These lists will be list of peak values coming from the fingerprint function."""
     def lcs(self,list1,list2):
        return  self.fingerprint_algorithm.lcs(list1,list2)
