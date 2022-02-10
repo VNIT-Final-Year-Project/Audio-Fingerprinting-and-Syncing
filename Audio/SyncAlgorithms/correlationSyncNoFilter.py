@@ -16,21 +16,21 @@ class correlationSyncNoFilter(SyncAlgorithm):
         pass
 
     def sync(self, file_path):
-        recorder = Recorder(1, 44100, 1, 20)
+        downsampling = 40
+        recorder = Recorder(3, 44100, 1, downsampling)
         recording = recorder.record()
         tic = time.perf_counter()
-        audio = getAudio().get_audio(file_path, 20)
+        audio = getAudio().get_audio(file_path, downsampling)
         main_audio = getAudio().get_audio(file_path,1)
         res_plot = signal.correlate(audio, recording, "full")
-        plt.plot(res_plot)
-        plt.show()
         id = res_plot.argmax()
         audio_temp = WAVE(file_path)
         ti = audio_temp.info.length
         l = len(main_audio) / ti
         toc = time.perf_counter()
-        m = int(20 * id + l * (toc - tic))
+        m = int(downsampling * id + l * (toc - tic))
         y = main_audio[m:]
         sd.play(y)
         time.sleep(10)
         sd.stop()
+        print("Sync Time:"+str(toc-tic))

@@ -8,6 +8,9 @@ from Audio.fastComputation.fastComputation import fastComputation
 from Audio.Record.Record import Recorder
 from numba import jit
 
+import ctypes
+def malloc_trim():
+    ctypes.CDLL('libc.so.6').malloc_trim(0)
 
 class invariantAlgorithm(FingerprintAlgorithm):
     def __init__(self):
@@ -21,16 +24,13 @@ class invariantAlgorithm(FingerprintAlgorithm):
                 data = data[:, 0]
             Pxx, f, t, im = plt.specgram(data, Fs=samplerate, noverlap=500,NFFT=1024,mode='magnitude'
                                          ,cmap='jet')
-            # print(Pxx)
-            # plt.show()
             print(Pxx.shape)
             peaks = self.get_peaks(Pxx, f)
             return peaks
         else:
             print("started recording to fingerprint")
-            recorder = Recorder(1, 44100, 1, 1)
+            recorder = Recorder(5, 44100, 1, 1)
             data = recorder.record()
-
             print("stopped recording to fingerprint")
             Pxx, f, t, im = plt.specgram(data, Fs=44100, noverlap=500, NFFT=1024, mode='magnitude'
                                          , cmap='jet')

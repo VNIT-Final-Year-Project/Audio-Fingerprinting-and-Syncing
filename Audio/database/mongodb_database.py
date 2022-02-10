@@ -1,7 +1,9 @@
 from Audio.database.database import database
 import pymongo
 import collections
-
+import ctypes
+def malloc_trim():
+    ctypes.CDLL('libc.so.6').malloc_trim(0)
 
 class mongodb_database(database):
     def __init__(self,connection_string):
@@ -25,9 +27,14 @@ class mongodb_database(database):
                 for i in range(len(peaks)):
                     collection_hash.update({"hash": peaks[i]}, {'$push': {'Values': [songId, i]}}, True)
             print(SongName+" fingerprinted")
+            del peaks
+            del collection_hash
+            del collection_ids
+            del result
             client.close()
         except Exception as e:
             print(e)
+        malloc_trim()
 
     def record_result_from_database(self,Audio):
         """Code to retrieve data of recorded song match from database"""
