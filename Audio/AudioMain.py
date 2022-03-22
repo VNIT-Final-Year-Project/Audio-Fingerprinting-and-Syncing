@@ -11,8 +11,9 @@ class Audio:
         self.base_path = base_path
 
     """This syncs the base_path + songName provided with the recorded snippet"""
-    def sync_audio(self,SongName):
-        self.sync_algorithm.sync(self.base_path.format(SongName))
+    def sync_audio(self,SongName,recordit):
+        self.sync_algorithm.sync(self.base_path.format(SongName),recordit)
+
 
     """This function returns the list of peaks for a SongName provided if Record is false.
     If Record is set True then it will return peaks for the recorded audio"""
@@ -30,6 +31,10 @@ class Audio:
     corresponds to songs_found[0] because record[0] is for recorded audio."""
     def record_result_from_database(self):
         return self.database.record_result_from_database(self)
+
+    def result_from_database(self):
+        return self.database.result_from_database(self)
+
 
     """This function is used to return the LCS value for the two lists provided as arguements.
     These lists will be list of peak values coming from the fingerprint function."""

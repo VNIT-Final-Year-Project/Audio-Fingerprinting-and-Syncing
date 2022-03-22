@@ -4,14 +4,14 @@ from Audio.FingerprintAlgorithms.invariantAlgorithm import invariantAlgorithm
 from Audio.database.mongodb_database import mongodb_database
 from multiprocessing import Pool
 from Audio.QueueWorker.queueWorker import Queueworker
+from Audio.Paths import Paths
 import threading
 import warnings
 import time
 warnings.filterwarnings("ignore")
 
-import ctypes
-def malloc_trim():
-    ctypes.CDLL('libc.so.6').malloc_trim(0)
+
+
 
 q = []
 
@@ -19,12 +19,13 @@ q = []
 def main():
     start_time = time.time()
     audio = Audio(correlationSyncNoFilter(),invariantAlgorithm(),
-                  mongodb_database("mongodb://localhost:27017"),
-                  r'/home/tarundecipher/Documents/Music_wav/{}'
+                  mongodb_database("mongodb://localhost:27017",r'C:\Users\tarun\OneDrive\Desktop\Coding\Audio backend\file.wav'),
+                  r'C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\{}'
                   )
-
+    p = Paths.getInstance()
+    p.setRecordingPath(r"C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\final_file.wav")
     """sync example"""
-    # audio.sync_audio('Eminem - The Monster (Audio) ft. Rihanna [LoudTronix] [HQ].mp3.wav')
+    audio.sync_audio('02 The Humma Song - OK Jaanu 320Kbps.wav',False)
 
 
 
@@ -32,13 +33,13 @@ def main():
 
     # import os
     # #
-    # Songs = os.listdir(r'/home/tarundecipher/Documents/Music_wav')
+    # Songs = os.listdir(r'C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav')
     # starmap_tuple = []
     # for song in Songs:
     #     starmap_tuple.append(song)
     #     # audio.fingerprint_to_database(song)
     #
-    # p2 = Pool(processes=4)
+    # p2 = Pool()
     # # output = p2.starmap(audio.fingerprint_to_database,starmap_tuple)
     # p2.map(audio.fingerprint_to_database,starmap_tuple)
     # p2.close()
@@ -48,31 +49,30 @@ def main():
 
     """computing lcs of result obtained"""
     """connencting to database"""
-    result,songs_found = audio.record_result_from_database()
-    import pymongo
-    client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
-    db = client['Fingerprints']
-    collection_song = db['SongIds']
+    # result,songs_found = audio.record_result_from_database()
+    # print(time.time()-start_time)
+    # import pymongo
+    # client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
+    # db = client['Fingerprints']
+    # collection_song = db['SongIds']
 
 
 
     """Using Single Machine multiple cores"""
-    p2 = Pool(processes=4)
-    data = []
-    for i in range(1,len(result)):
-        data.append((result[i],result[0]))
-    output = p2.starmap(audio.lcs,data)
-
-
-    p2.close()
-    p2.join()
-    SongName = collection_song.find_one({'_id':songs_found[output.index(max(output))]})['SongName']
-    print(SongName)
-    client.close()
-    del output
-    malloc_trim()
-    print("Time taken: " + str(time.time()-start_time))
-    audio.sync_audio(SongName)
+    # p2 = Pool()
+    # data = []
+    # for i in range(1,len(result)):
+    #     data.append((result[i],result[0]))
+    # output = p2.starmap(audio.lcs,data)
+    #
+    #
+    # p2.close()
+    # p2.join()
+    # SongName = collection_song.find_one({'_id':songs_found[output.index(max(output))]})['SongName']
+    # print(SongName)
+    # client.close()
+    # print("Time taken: " + str(time.time()-start_time))
+    # audio.sync_audio(SongName)
 
 
 
@@ -99,5 +99,5 @@ def main():
     # print(q)
     # print(time.time()-start_time)
     # client.close()
-
-main()
+if __name__=='__main__':
+    main()
