@@ -4,12 +4,14 @@ from Audio.FingerprintAlgorithms.invariantAlgorithm import invariantAlgorithm
 from Audio.database.mongodb_database import mongodb_database
 from multiprocessing import Pool
 from Audio.QueueWorker.queueWorker import Queueworker
+from Audio.Paths import Paths
 import threading
 import warnings
 import time
 warnings.filterwarnings("ignore")
 
 
+# python setup.py sdist bdist_wheel
 
 
 q = []
@@ -21,9 +23,10 @@ def main():
                   mongodb_database("mongodb://localhost:27017",r'C:\Users\tarun\OneDrive\Desktop\Coding\Audio backend\file.wav'),
                   r'C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\{}'
                   )
-
+    p = Paths.getInstance()
+    p.setRecordingPath(r"C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\final_file.wav")
     """sync example"""
-    # audio.sync_audio('Eminem - The Monster (Audio) ft. Rihanna [LoudTronix] [HQ].mp3.wav')
+    audio.sync_audio('Channa Ve (Bhoot).wav',True)
 
 
 
@@ -47,30 +50,30 @@ def main():
 
     """computing lcs of result obtained"""
     """connencting to database"""
-    result,songs_found = audio.record_result_from_database()
-    print(time.time()-start_time)
-    import pymongo
-    client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
-    db = client['Fingerprints']
-    collection_song = db['SongIds']
+    # result,songs_found = audio.record_result_from_database()
+    # print(time.time()-start_time)
+    # import pymongo
+    # client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
+    # db = client['Fingerprints']
+    # collection_song = db['SongIds']
 
 
 
     """Using Single Machine multiple cores"""
-    p2 = Pool()
-    data = []
-    for i in range(1,len(result)):
-        data.append((result[i],result[0]))
-    output = p2.starmap(audio.lcs,data)
-
-
-    p2.close()
-    p2.join()
-    SongName = collection_song.find_one({'_id':songs_found[output.index(max(output))]})['SongName']
-    print(SongName)
-    client.close()
-    print("Time taken: " + str(time.time()-start_time))
-    audio.sync_audio(SongName)
+    # p2 = Pool()
+    # data = []
+    # for i in range(1,len(result)):
+    #     data.append((result[i],result[0]))
+    # output = p2.starmap(audio.lcs,data)
+    #
+    #
+    # p2.close()
+    # p2.join()
+    # SongName = collection_song.find_one({'_id':songs_found[output.index(max(output))]})['SongName']
+    # print(SongName)
+    # client.close()
+    # print("Time taken: " + str(time.time()-start_time))
+    # audio.sync_audio(SongName)
 
 
 

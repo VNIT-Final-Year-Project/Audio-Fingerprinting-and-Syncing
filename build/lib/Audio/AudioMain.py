@@ -11,8 +11,9 @@ class Audio:
         self.base_path = base_path
 
     """This syncs the base_path + songName provided with the recorded snippet"""
-    def sync_audio(self,SongName):
-        self.sync_algorithm.sync(self.base_path.format(SongName))
+    def sync_audio(self,SongName,recordit):
+        return self.sync_algorithm.sync(self.base_path.format(SongName),recordit)
+
 
     """This function returns the list of peaks for a SongName provided if Record is false.
     If Record is set True then it will return peaks for the recorded audio"""

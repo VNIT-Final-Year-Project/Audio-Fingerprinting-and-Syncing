@@ -12,7 +12,7 @@ class Audio:
 
     """This syncs the base_path + songName provided with the recorded snippet"""
     def sync_audio(self,SongName,recordit):
-        self.sync_algorithm.sync(self.base_path.format(SongName),recordit)
+        return self.sync_algorithm.sync(self.base_path.format(SongName),recordit)
 
 
     """This function returns the list of peaks for a SongName provided if Record is false.

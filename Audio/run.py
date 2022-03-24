@@ -11,6 +11,7 @@ import time
 warnings.filterwarnings("ignore")
 
 
+# python setup.py sdist bdist_wheel
 
 
 q = []
@@ -25,7 +26,7 @@ def main():
     p = Paths.getInstance()
     p.setRecordingPath(r"C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\final_file.wav")
     """sync example"""
-    audio.sync_audio('02 The Humma Song - OK Jaanu 320Kbps.wav',False)
+    audio.sync_audio('Channa Ve (Bhoot).wav',True)
 
 
 

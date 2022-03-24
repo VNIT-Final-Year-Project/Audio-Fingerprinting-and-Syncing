@@ -7,6 +7,7 @@ from scipy import signal
 import time
 import sounddevice as sd
 from mutagen.wave import WAVE
+import numpy as np
 
 
 class correlationSyncNoFilter(SyncAlgorithm):
@@ -15,13 +16,13 @@ class correlationSyncNoFilter(SyncAlgorithm):
 
     def sync(self, file_path,recordit):
         if(recordit):
-            downsampling = 20
+            downsampling = 1
             recorder = Recorder(3, 44100, 1, downsampling)
             recording = recorder.record()
             tic = time.time()
             audio = getAudio().get_audio(file_path, downsampling)
             main_audio = getAudio().get_audio(file_path,1)
-            res_plot = signal.correlate(audio, recording, "full")
+            res_plot = signal.correlate(audio, recording, "full",method='fft')
             id = res_plot.argmax()
             audio_temp = WAVE(file_path)
             ti = audio_temp.info.length
@@ -38,7 +39,6 @@ class correlationSyncNoFilter(SyncAlgorithm):
             obj = Paths.getInstance()
             file_path_recording = obj.recordingPath
             recording = getAudio().get_audio(file_path_recording, downsampling)
-            tic = time.time()
             audio = getAudio().get_audio(file_path, downsampling)
             main_audio = getAudio().get_audio(file_path, 1)
             res_plot = signal.correlate(audio, recording, "full")
@@ -46,11 +46,9 @@ class correlationSyncNoFilter(SyncAlgorithm):
             audio_temp = WAVE(file_path)
             ti = audio_temp.info.length
             l = len(main_audio) / ti
-            originalSyncPoint = downsampling*id
-            originalSyncduration = originalSyncPoint/l
-            toc = time.time()
-            print(toc-tic+originalSyncduration)
-            print((toc-tic+originalSyncduration)-60)
+            originalSyncPoint = downsampling * id
+            final_time = originalSyncPoint / l
+            return final_time
 
 
 
