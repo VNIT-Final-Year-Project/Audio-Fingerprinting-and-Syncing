@@ -3,6 +3,7 @@ from Audio.SyncAlgorithms.correlationSyncNoFilter import correlationSyncNoFilter
 from Audio.FingerprintAlgorithms.invariantAlgorithm import invariantAlgorithm
 from Audio.database.mongodb_database import mongodb_database
 from multiprocessing import Pool
+from Audio.database.postgres_database import postgres_database
 from Audio.QueueWorker.queueWorker import Queueworker
 from Audio.Paths import Paths
 import threading
@@ -19,21 +20,25 @@ q = []
 
 def main():
     start_time = time.time()
-    audio = Audio(correlationSyncNoFilter(),invariantAlgorithm(),
-                  mongodb_database("mongodb://localhost:27017",r'C:\Users\tarun\OneDrive\Desktop\Coding\Audio backend\file.wav'),
+    # audio = Audio(correlationSyncNoFilter(),invariantAlgorithm(),
+    #               mongodb_database("mongodb://localhost:27017",r'C:\Users\tarun\OneDrive\Desktop\Coding\Audio backend\file.wav'),
+    #               r'C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\{}'
+    #               )
+    audio = Audio(correlationSyncNoFilter(), invariantAlgorithm(),
+                  postgres_database(),
                   r'C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\{}'
                   )
     p = Paths.getInstance()
     p.setRecordingPath(r"C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav\final_file.wav")
     """sync example"""
-    audio.sync_audio('Channa Ve (Bhoot).wav',True)
-
-
+    # audio.sync_audio('Channa Ve (Bhoot).wav',True)
+    # audio.fingerprint_to_database('02 Saadi Galli Aaja (Nautanki Saala).wav')
+    # audio.record_result_from_database()
 
     """Code to fingerprint Songs with following names in /music folder"""
 
     # import os
-    # #
+    #
     # Songs = os.listdir(r'C:\Users\tarun\OneDrive\Desktop\Documents\Music_wav')
     # starmap_tuple = []
     # for song in Songs:
@@ -45,13 +50,14 @@ def main():
     # p2.map(audio.fingerprint_to_database,starmap_tuple)
     # p2.close()
     # p2.join()
+    # print(time.time()-start_time)
 
 
 
     """computing lcs of result obtained"""
     """connencting to database"""
-    # result,songs_found = audio.record_result_from_database()
-    # print(time.time()-start_time)
+    result,songs_found = audio.record_result_from_database()
+    print(time.time()-start_time)
     # import pymongo
     # client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
     # db = client['Fingerprints']
@@ -60,19 +66,20 @@ def main():
 
 
     """Using Single Machine multiple cores"""
-    # p2 = Pool()
-    # data = []
-    # for i in range(1,len(result)):
-    #     data.append((result[i],result[0]))
-    # output = p2.starmap(audio.lcs,data)
-    #
-    #
-    # p2.close()
-    # p2.join()
+    p2 = Pool()
+    data = []
+    for i in range(1,len(result)):
+        data.append((result[i],result[0]))
+    output = p2.starmap(audio.lcs,data)
+
+
+    p2.close()
+    p2.join()
     # SongName = collection_song.find_one({'_id':songs_found[output.index(max(output))]})['SongName']
+    print(songs_found[output.index(max(output))])
     # print(SongName)
     # client.close()
-    # print("Time taken: " + str(time.time()-start_time))
+    print("Time taken: " + str(time.time()-start_time))
     # audio.sync_audio(SongName)
 
 
