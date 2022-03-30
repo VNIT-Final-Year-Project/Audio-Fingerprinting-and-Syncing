@@ -1,36 +1,39 @@
 
 import hashlib
-from numba import jit
+import zlib
+
 
 class fastComputation():
   def __init__(self):
       pass
 
+
   def lcs(X, Y):
       m = len(X)
       n = len(Y)
 
-      # allocate storage for one-dimensional lists, `curr` and `prev`
-      curr = [0] * (n + 1)
-      prev = [0] * (n + 1)
-
-      # fill the lookup table in a bottom-up manner
+      # declaring the array for storing the dp values
+      # L = [[None] * (n + 1) for i in range(m + 1)]
+      L = []
+      for i in range(m + 1):
+          temp = []
+          for j in range(n + 1):
+              temp.append(0)
+          L.append(temp)
+      """Following steps build L[m + 1][n + 1] in bottom up fashion
+      Note: L[i][j] contains length of LCS of X[0..i-1]
+      and Y[0..j-1]"""
       for i in range(m + 1):
           for j in range(n + 1):
-              if i > 0 and j > 0:
-                  # if the current character of `X` and `Y` matches
-                  if X[i - 1] == Y[j - 1]:
-                      curr[j] = prev[j - 1] + 1
-                  # otherwise, if the current character of `X` and `Y` don't match
-                  else:
-                      curr[j] = max(prev[j], curr[j - 1])
+              if i == 0 or j == 0:
+                  L[i][j] = 0
+              elif X[i - 1] == Y[j - 1]:
+                  L[i][j] = L[i - 1][j - 1] + 1
+              else:
+                  L[i][j] = max(L[i - 1][j], L[i][j - 1])
 
-          # replace contents of the previous list with the current list
-          prev = curr.copy()
-
-      # LCS will be the last entry in the lookup table
-      return curr[n]
-
+      # L[m][n] contains the length of LCS of X[0..n-1] & Y[0..m-1]
+      return L[m][n]
 
   def get_peaks(Pxx,f):
     peaks = []
@@ -58,6 +61,8 @@ class fastComputation():
         if(freq>0 and freq2>0 and freq3>0):
             temp = str(freq)+str(freq2)+str(freq3)
             peaks.append(hashlib.md5(temp.encode()).hexdigest())
+            # peaks.append(zlib.crc32(temp.encode()))
+            # peaks.append(temp)
             ma = -4000
             freq = 0
             ma2 = -4000
